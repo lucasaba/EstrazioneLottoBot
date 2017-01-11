@@ -34,6 +34,7 @@ class DefaultController extends Controller
         $estrazione = $this->get('scarica_estrazione')->numeroAnno($numero, $anno);
 
         $response = new JsonResponse();
+
         if($estrazione === false) {
             $response->setData(['msg' => 'Nessuna estrazione trovata']);
         } else {
@@ -50,9 +51,10 @@ class DefaultController extends Controller
     public function ultimaEstrazioneAction()
     {
         $estrazione = $this->get('scarica_estrazione')->infoUltimaEstrazione();
-
         $response = new JsonResponse();
+
         $response->setData($estrazione->toArray());
+        
         return $response;
     }
 }

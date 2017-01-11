@@ -52,7 +52,7 @@ class ScaricaEstrazione
 
         $contenuto = file_get_contents($url);
 
-        if(strpos('Non ci sono estrazioni', $contenuto) === false) {
+        if(strpos($contenuto, 'Non ci sono estrazioni') !== false) {
             return false;
         }
 
