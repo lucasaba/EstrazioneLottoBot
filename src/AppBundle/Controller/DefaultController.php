@@ -46,7 +46,7 @@ class DefaultController extends Controller
     /**
      * @Route("/ultima-estrazione", name="ultima_estrazione")
      *
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @return \Symfony\Component\HttpFoundation\JsonResponse
      */
     public function ultimaEstrazioneAction()
     {
@@ -54,7 +54,22 @@ class DefaultController extends Controller
         $response = new JsonResponse();
 
         $response->setData($estrazione->toArray());
-        
+
+        return $response;
+    }
+
+    /**
+     * @Route("/webhook/update/AociaIxsa8hjnii", name="telegram_webhook_update")
+     *
+     *
+     */
+    public function telegramWebhookAction()
+    {
+        $estrazione = $this->get('scarica_estrazione')->infoUltimaEstrazione();
+        $response = new JsonResponse();
+
+        $response->setData($estrazione->toArray());
+
         return $response;
     }
 }
