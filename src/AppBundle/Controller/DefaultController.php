@@ -2,10 +2,12 @@
 
 namespace AppBundle\Controller;
 
+use GuzzleHttp\Client;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class DefaultController extends Controller
 {
@@ -61,15 +63,32 @@ class DefaultController extends Controller
     /**
      * @Route("/webhook/update/AociaIxsa8hjnii", name="telegram_webhook_update")
      *
-     *
+     * @param Request $request
+     * @return Response
      */
-    public function telegramWebhookAction()
+    public function telegramWebhookAction(Request $request)
     {
+        $data = json_decode($request->getContent(), true);
+        $telegram_api = sprintf(
+            'https://api.telegram.org/bot%s/',
+            $this->getParameter('telegram_api_key')
+        );
+
+        $client = new Client([
+            'base_uri' => $telegram_api
+        ]);
+
         $estrazione = $this->get('scarica_estrazione')->infoUltimaEstrazione();
-        $response = new JsonResponse();
 
-        $response->setData($estrazione->toArray());
+        $response = $client->request('POST', $telegram_api.'sendMessage', [
+            'json' => [
+                'chat_id' => $data['message']['chat']['id'],
+                'text' => json_encode($estrazione->toArray())
+            ]
+        ]);
 
-        return $response;
+        var_dump($response);
+
+        return new Response();
     }
 }
