@@ -53,7 +53,7 @@ class DefaultController extends Controller
     public function ultimaEstrazioneAction()
     {
         $estrazione = $this->get('scarica_estrazione')->infoUltimaEstrazione();
-        
+
         $response = new JsonResponse();
 
         $response->setData($estrazione->toArray());
@@ -62,13 +62,16 @@ class DefaultController extends Controller
     }
 
     /**
-     * @Route("/webhook/update/AociaIxsa8hjnii", name="telegram_webhook_update")
+     * @Route("/webhook/update/{secret}", name="telegram_webhook_update")
      *
      * @param Request $request
      * @return Response
      */
-    public function telegramWebhookAction(Request $request)
+    public function telegramWebhookAction($secret, Request $request)
     {
+        if($secret != $this->getParameter('telegram_secret_uri')) {
+            return new Response();
+        }
         $data = json_decode($request->getContent(), true);
         $telegram_api = sprintf(
             'https://api.telegram.org/bot%s/',
@@ -79,11 +82,18 @@ class DefaultController extends Controller
             'base_uri' => $telegram_api
         ]);
 
+        $this->get('logger')->addCritical($request->getContent());
+
+        if(! isset($data['message']['entities']) || ! $data['message']['entities'][0]['type'] == 'bot_command') {
+            $this->messaggioNessunComandoInviato($client, $telegram_api, $data);
+            return new Response();
+        }
+
         $estrazione = $this->get('scarica_estrazione')->infoUltimaEstrazione();
 
         $messaggio = $this->get('twig')->render('messaggi/estrazione.txt.twig', array('estrazione' => $estrazione->toArray()));
 
-        $response = $client->request('POST', $telegram_api.'sendMessage', [
+        $client->request('POST', $telegram_api.'sendMessage', [
             'json' => [
                 'chat_id' => $data['message']['chat']['id'],
                 'text' => $messaggio,
@@ -91,8 +101,17 @@ class DefaultController extends Controller
             ]
         ]);
 
-        var_dump($response);
-
         return new Response();
+    }
+
+    private function messaggioNessunComandoInviato(Client $client, $telegram_api, $data)
+    {
+        $client->request('POST', $telegram_api.'sendMessage', [
+            'json' => [
+                'chat_id' => $data['message']['chat']['id'],
+                'text' => 'Ciao '.$data['message']['from']['first_name'].', sto aspettando un comando. Prova con /ultimaestrazione o con /estrazione',
+                'parse_mode' => 'Markdown'
+            ]
+        ]);
     }
 }

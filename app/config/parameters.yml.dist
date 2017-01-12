@@ -21,3 +21,4 @@ parameters:
     # Dati per le API di telegram
     telegram_api_key: 123456
     telegram_bot_name: NomeBot
+    telegram_secret_uri: thismustbesecret
