@@ -59,7 +59,11 @@ class ScaricaEstrazione
         $xml = new \DOMDocument();
         $xml->loadHTML($contenuto);
 
-        $estrazione = new Estrazione($numero, $anno, new \DateTime());
+        $dati_estrazione = json_decode($xml->getElementById('cmsTiTrovi')->nodeValue, true);
+        $label = $dati_estrazione['breadcrumb'][0]['label'];
+        preg_match('/(\d{2}\/\d{2}\/\d{4})/', $label, $matches);
+
+        $estrazione = new Estrazione($numero, $anno, \DateTime::createFromFormat('d/m/Y', $matches[0]));
 
         foreach ($xml->getElementsByTagName('tr') as $riga) {
             /* @var \DOMElement $riga */

@@ -38,7 +38,12 @@ class Estrazione implements \Iterator
     {
         $this->numero = $numero;
         $this->anno = $anno;
-        $this->data = $data;
+        if($data instanceof \DateTime) {
+            $this->data = $data;
+        } else {
+            $this->data = \DateTime::createFromFormat('d/m/Y', $data);
+        }
+
         $this->ruote = array();
         $this->puntatore = 0;
         $this->numero_ruote = 0;
@@ -135,7 +140,7 @@ class Estrazione implements \Iterator
         $estrazione = array(
             'numero' => $this->numero,
             'anno' => $this->anno,
-            'data' => $this->data,
+            'data' => $this->data->format('d/m/Y'),
             'ruote' => array()
         );
 

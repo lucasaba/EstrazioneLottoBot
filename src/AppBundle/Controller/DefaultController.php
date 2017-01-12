@@ -53,6 +53,7 @@ class DefaultController extends Controller
     public function ultimaEstrazioneAction()
     {
         $estrazione = $this->get('scarica_estrazione')->infoUltimaEstrazione();
+        
         $response = new JsonResponse();
 
         $response->setData($estrazione->toArray());
@@ -80,10 +81,13 @@ class DefaultController extends Controller
 
         $estrazione = $this->get('scarica_estrazione')->infoUltimaEstrazione();
 
+        $messaggio = $this->get('twig')->render('messaggi/estrazione.txt.twig', array('estrazione' => $estrazione->toArray()));
+
         $response = $client->request('POST', $telegram_api.'sendMessage', [
             'json' => [
                 'chat_id' => $data['message']['chat']['id'],
-                'text' => json_encode($estrazione->toArray())
+                'text' => $messaggio,
+                'parse_mode' => 'Markdown'
             ]
         ]);
 

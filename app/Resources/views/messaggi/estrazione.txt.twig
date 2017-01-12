@@ -1,0 +1,6 @@
+*Estrazione numero {{ estrazione['numero'] }}/{{ estrazione['anno'] }} del {{ estrazione['data'] }}*
+
+{% for ruota, numeri in estrazione['ruote'] %}
+_{{ ruota }}_
+`{% for numero in numeri %}{{ "%02d"|format(numero) }}{% if not loop.last%}-{% endif %}{% endfor %}`
+{% endfor %}
