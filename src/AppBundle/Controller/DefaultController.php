@@ -109,7 +109,7 @@ class DefaultController extends Controller
         $client->request('POST', $telegram_api.'sendMessage', [
             'json' => [
                 'chat_id' => $data['message']['chat']['id'],
-                'text' => 'Ciao '.$data['message']['from']['first_name'].', sto aspettando un comando. Prova con /ultimaestrazione o con /estrazione',
+                'text' => 'Ciao '.$data['message']['from']['first_name'].', sto aspettando un comando. Prova con /ultimaestrazione',
                 'parse_mode' => 'Markdown'
             ]
         ]);
