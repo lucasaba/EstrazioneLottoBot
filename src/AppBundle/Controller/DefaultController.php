@@ -109,31 +109,21 @@ class DefaultController extends Controller
         switch ($data['message']['text']) {
             case '/superenalotto':
                 $estrazione = $this->get('scarica_estrazione_superenalotto')->infoUltimaEstrazione();
-
                 $messaggio = $this->get('twig')->render('messaggi/estrazione_superenalotto.txt.twig', array('estrazione' => $estrazione->toArray()));
-
-                $client->request('POST', $telegram_api.'sendMessage', [
-                    'json' => [
-                        'chat_id' => $data['message']['chat']['id'],
-                        'text' => $messaggio,
-                        'parse_mode' => 'Markdown'
-                    ]
-                ]);
                 break;
             case '/lotto':
                 $estrazione = $this->get('scarica_estrazione')->infoUltimaEstrazione();
-
                 $messaggio = $this->get('twig')->render('messaggi/estrazione.txt.twig', array('estrazione' => $estrazione->toArray()));
-
-                $client->request('POST', $telegram_api.'sendMessage', [
-                    'json' => [
-                        'chat_id' => $data['message']['chat']['id'],
-                        'text' => $messaggio,
-                        'parse_mode' => 'Markdown'
-                    ]
-                ]);
                 break;
         }
+
+        $client->request('POST', $telegram_api.'sendMessage', [
+            'json' => [
+                'chat_id' => $data['message']['chat']['id'],
+                'text' => $messaggio,
+                'parse_mode' => 'Markdown'
+            ]
+        ]);
 
         return new Response();
     }

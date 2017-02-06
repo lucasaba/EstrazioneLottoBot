@@ -88,9 +88,9 @@ class ScaricaEstrazioneSuperenalotto
             }
         }
         $data = \DateTime::createFromFormat('d/m/Y', $matches[0]);
-        var_dump($data);die;
+
         $estrazione = new EstrazioneSuperenalotto(
-            $numero, $anno, $data,
+            (int) $numero, (int) $anno, $data,
             $numeri, $jolly, $superstar
         );
 
