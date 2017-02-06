@@ -44,7 +44,7 @@ class ScaricaEstrazione
     public function numeroAnno($numero, $anno)
     {
         if(file_exists($this->getCachedFileName($numero, $anno))) {
-            $estrazione = Estrazione::createFromCahche($this->getCachedFileName($numero, $anno));
+            $estrazione = Estrazione::createFromCache($this->getCachedFileName($numero, $anno));
             return $estrazione;
         }
 

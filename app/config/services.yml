@@ -5,5 +5,8 @@ parameters:
 
 services:
     scarica_estrazione:
-       class: AppBundle\Service\ScaricaEstrazione
-       arguments: [ "%kernel.cache_dir%" ]
+        class: AppBundle\Service\ScaricaEstrazione
+        arguments: [ "%kernel.cache_dir%" ]
+    scarica_estrazione_superenalotto:
+        class: AppBundle\Service\ScaricaEstrazioneSuperenalotto
+        arguments: [ "%kernel.cache_dir%" ]

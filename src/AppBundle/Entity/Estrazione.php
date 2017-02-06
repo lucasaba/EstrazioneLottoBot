@@ -53,7 +53,7 @@ class Estrazione implements \Iterator
      * @param $file_cache
      * @return Estrazione
      */
-    public static function createFromCahche($file_cache)
+    public static function createFromCache($file_cache)
     {
         $data = json_decode(file_get_contents($file_cache), true);
         $estrazione = new Estrazione($data['numero'], $data['anno'], $data['data']);

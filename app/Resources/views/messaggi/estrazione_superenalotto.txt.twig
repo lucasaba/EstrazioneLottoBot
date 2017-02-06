@@ -1,0 +1,8 @@
+*Estrazione numero {{ estrazione['numero'] }}/{{ estrazione['anno'] }} del {{ estrazione['data'] }}*
+
+{% for numeri in estrazione['numeri'] %}
+`{{ "%02d"|format(numero) }}{% if not loop.last%}-{% endif %}`
+{% endfor %}
+
+Numero Jolly: `{{ "%02d"|format(estrazione['numero']) }}`
+Numero Superstar: `{{ "%02d"|format(estrazione['numero_suerstar']) }}`

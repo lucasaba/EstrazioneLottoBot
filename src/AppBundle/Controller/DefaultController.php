@@ -62,6 +62,22 @@ class DefaultController extends Controller
     }
 
     /**
+     * @Route("/ultima-estrazione-superenalotto", name="ultima_estrazione_superenalotto")
+     *
+     * @return \Symfony\Component\HttpFoundation\JsonResponse
+     */
+    public function ultimaEstrazioneSuperenalottoAction()
+    {
+        $estrazione = $this->get('scarica_estrazione_superenalotto')->infoUltimaEstrazione();
+
+        $response = new JsonResponse();
+
+        $response->setData($estrazione->toArray());
+
+        return $response;
+    }
+
+    /**
      * @Route("/webhook/update/{secret}", name="telegram_webhook_update")
      *
      * @param Request $request
@@ -82,24 +98,42 @@ class DefaultController extends Controller
             'base_uri' => $telegram_api
         ]);
 
-        $this->get('logger')->addCritical($request->getContent());
+        //$this->get('logger')->addCritical($data['message']['text']);
+
 
         if(! isset($data['message']['entities']) || ! $data['message']['entities'][0]['type'] == 'bot_command') {
             $this->messaggioNessunComandoInviato($client, $telegram_api, $data);
             return new Response();
         }
 
-        $estrazione = $this->get('scarica_estrazione')->infoUltimaEstrazione();
+        switch ($data['message']['text']) {
+            case '/superenalotto':
+                $estrazione = $this->get('scarica_estrazione_superenalotto')->infoUltimaEstrazione();
 
-        $messaggio = $this->get('twig')->render('messaggi/estrazione.txt.twig', array('estrazione' => $estrazione->toArray()));
+                $messaggio = $this->get('twig')->render('messaggi/estrazione_superenalotto.txt.twig', array('estrazione' => $estrazione->toArray()));
 
-        $client->request('POST', $telegram_api.'sendMessage', [
-            'json' => [
-                'chat_id' => $data['message']['chat']['id'],
-                'text' => $messaggio,
-                'parse_mode' => 'Markdown'
-            ]
-        ]);
+                $client->request('POST', $telegram_api.'sendMessage', [
+                    'json' => [
+                        'chat_id' => $data['message']['chat']['id'],
+                        'text' => $messaggio,
+                        'parse_mode' => 'Markdown'
+                    ]
+                ]);
+                break;
+            case '/lotto':
+                $estrazione = $this->get('scarica_estrazione')->infoUltimaEstrazione();
+
+                $messaggio = $this->get('twig')->render('messaggi/estrazione.txt.twig', array('estrazione' => $estrazione->toArray()));
+
+                $client->request('POST', $telegram_api.'sendMessage', [
+                    'json' => [
+                        'chat_id' => $data['message']['chat']['id'],
+                        'text' => $messaggio,
+                        'parse_mode' => 'Markdown'
+                    ]
+                ]);
+                break;
+        }
 
         return new Response();
     }
